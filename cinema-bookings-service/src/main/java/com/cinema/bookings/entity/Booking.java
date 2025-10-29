@@ -37,7 +37,7 @@ public class Booking extends BaseEntity {
     @Column(name = "seat_row", length = 5)
     private String seatRow;
 
-    @Column(precision = 10, scale = 2)
+    @Column(name = "price")
     private Double price;
 
     @Column(length = 20)
