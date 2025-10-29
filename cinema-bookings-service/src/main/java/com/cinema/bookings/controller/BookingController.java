@@ -49,4 +49,24 @@ public class BookingController {
         List<BookingResponseDTO> bookings = bookingService.getAllBookings();
         return ResponseEntity.ok(bookings);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<BookingResponseDTO>> getBookingsByUserId(@PathVariable Long userId) {
+        List<BookingResponseDTO> bookings = bookingService.getBookingsByUserId(userId);
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<BookingResponseDTO>> filterBookingsByStatus(@RequestParam String status) {
+        List<BookingResponseDTO> bookings = bookingService.getBookingsByStatus(status);
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/sort")
+    public ResponseEntity<List<BookingResponseDTO>> sortBookings(
+            @RequestParam(defaultValue = "screeningTime") String by,
+            @RequestParam(defaultValue = "asc") String order) {
+        List<BookingResponseDTO> bookings = bookingService.sortBookings(by, order);
+        return ResponseEntity.ok(bookings);
+    }
 }
