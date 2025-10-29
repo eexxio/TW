@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
@@ -51,5 +53,27 @@ public class MovieController {
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<MovieResponseDTO>> searchMoviesByTitle(@RequestParam String title) {
+        List<Movie> movies = movieService.searchMoviesByTitle(title);
+        List<MovieResponseDTO> responseDTOs = movieMapper.toResponseDTOList(movies);
+        return ResponseEntity.ok(responseDTOs);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<MovieResponseDTO>> filterMoviesByGenre(@RequestParam String genre) {
+        List<Movie> movies = movieService.filterMoviesByGenre(genre);
+        List<MovieResponseDTO> responseDTOs = movieMapper.toResponseDTOList(movies);
+        return ResponseEntity.ok(responseDTOs);
+    }
+
+    @GetMapping("/sort")
+    public ResponseEntity<List<MovieResponseDTO>> sortMoviesByRating(
+            @RequestParam(defaultValue = "desc") String order) {
+        List<Movie> movies = movieService.sortMoviesByRating(order);
+        List<MovieResponseDTO> responseDTOs = movieMapper.toResponseDTOList(movies);
+        return ResponseEntity.ok(responseDTOs);
     }
 }
