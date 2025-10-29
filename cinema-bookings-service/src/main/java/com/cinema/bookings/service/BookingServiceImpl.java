@@ -4,6 +4,7 @@ import com.cinema.bookings.dto.BookingMapper;
 import com.cinema.bookings.dto.BookingRequestDTO;
 import com.cinema.bookings.dto.BookingResponseDTO;
 import com.cinema.bookings.entity.Booking;
+import com.cinema.bookings.exception.BookingNotFoundException;
 import com.cinema.bookings.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,14 +30,14 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDTO getBookingById(Long id) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
+                .orElseThrow(() -> new BookingNotFoundException(id));
         return bookingMapper.toResponseDTO(booking);
     }
 
     @Override
     public BookingResponseDTO updateBooking(Long id, BookingRequestDTO requestDTO) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
+                .orElseThrow(() -> new BookingNotFoundException(id));
         bookingMapper.updateEntityFromDTO(requestDTO, booking);
         Booking updatedBooking = bookingRepository.save(booking);
         return bookingMapper.toResponseDTO(updatedBooking);
@@ -45,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteBooking(Long id) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
+                .orElseThrow(() -> new BookingNotFoundException(id));
         bookingRepository.delete(booking);
     }
 
