@@ -34,7 +34,7 @@ public class Movie extends BaseEntity {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    @Column(precision = 3, scale = 1)
+    @Column
     private Double rating;
 
     @Column(name = "poster_url", length = 500)
