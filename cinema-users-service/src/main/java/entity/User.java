@@ -2,11 +2,13 @@ package entity;
 
 import enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Setter
+@Getter
 @Table(name="users")
 @Entity
 public class User {
@@ -47,20 +49,16 @@ public class User {
 
     }
 
-    public User(Long user_id, String firstname, String lastname,
+    public User(String firstName, String lastName,
                 String email, String password, String phoneNumber,
-                String dateOfBirth, Role role, LocalDateTime createdAt,
-                LocalDateTime updatedAt) {
-        this.user_id = user_id;
-        this.firstname = firstname;
-        this.lastname = lastname;
+                String dateOfBirth, Role role) {
+        this.firstname = firstName;
+        this.lastname = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.role = role;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public void setUser_id(Long user_id) {
