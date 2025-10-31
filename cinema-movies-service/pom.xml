@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>com.cinema</groupId>
-    <artifactId>cinema-movies-service</artifactId>
+    <artifactId>cinema-movies-com.cinema.users.service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Cinema Movies Service</name>
     <description>Microservice for managing movies</description>

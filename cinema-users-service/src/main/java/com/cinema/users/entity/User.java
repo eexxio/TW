@@ -1,6 +1,6 @@
-package entity;
+package com.cinema.users.entity;
 
-import enums.Role;
+import com.cinema.users.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,8 @@
-package mapper;
+package com.cinema.users.mapper;
 
-import dto.UserCreateDTO;
-import dto.UserDTO;
-import entity.User;
+import com.cinema.users.dto.UserCreateDTO;
+import com.cinema.users.dto.UserDTO;
+import com.cinema.users.entity.User;
 
 public class UserMapper {
     public static User toEntity(UserCreateDTO userCreateDTO) {

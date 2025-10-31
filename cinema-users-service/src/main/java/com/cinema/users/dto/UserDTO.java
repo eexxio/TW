@@ -1,4 +1,4 @@
-package dto;
+package com.cinema.users.dto;
 
 public class UserDTO {
     private String email;

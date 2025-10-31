@@ -1,6 +1,6 @@
-package dto;
+package com.cinema.users.dto;
 
-import enums.Role;
+import com.cinema.users.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
