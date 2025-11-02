@@ -10,5 +10,10 @@ public interface IUserService {
     UserDTO updateUser(String email, UserCreateDTO userDTO);
     List<UserDTO> getAllUsers();
     boolean deleteUser(String email);
+    boolean login(String email, String password);
+    List<UserDTO> searchByName(String keyword);
+    List<UserDTO> filterByRole(String role);
+    List<UserDTO> sortByDateOfBirth(String direction);
+
 
 }

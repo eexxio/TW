@@ -11,6 +11,7 @@ import com.cinema.users.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -66,4 +67,42 @@ public class UserService implements  IUserService{
                 })
                 .orElse(false);
     }
+
+    @Override
+    public boolean login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User with email " + email + " not found"));
+        return user.getPassword().equals(password);
+    }
+
+    @Override
+    public List<UserDTO> searchByName(String keyword) {
+        return userRepository.findAll().stream()
+                .filter(u -> (u.getFirstname() != null && u.getFirstname().toLowerCase().contains(keyword.toLowerCase())) ||
+                        (u.getLastname() != null && u.getLastname().toLowerCase().contains(keyword.toLowerCase())))
+                .map(UserMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<UserDTO> filterByRole(String role) {
+        return userRepository.findAll().stream()
+                .filter(u -> u.getRole() != null && u.getRole().name().equalsIgnoreCase(role))
+                .map(UserMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<UserDTO> sortByDateOfBirth(String direction) {
+        Comparator<User> comparator = Comparator.comparing(User::getDateOfBirth);
+        if ("desc".equalsIgnoreCase(direction)) {
+            comparator = comparator.reversed();
+        }
+        return userRepository.findAll().stream()
+                .filter(u -> u.getDateOfBirth() != null)
+                .sorted(comparator)
+                .map(UserMapper::toDTO)
+                .toList();
+    }
+
 }
