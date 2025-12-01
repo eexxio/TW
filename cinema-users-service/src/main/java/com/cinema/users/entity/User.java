@@ -61,6 +61,17 @@ public class User {
         this.role = role;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }

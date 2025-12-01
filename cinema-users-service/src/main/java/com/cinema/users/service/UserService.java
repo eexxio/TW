@@ -72,7 +72,7 @@ public class UserService implements  IUserService{
     public boolean login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User with email " + email + " not found"));
-        return user.getPassword().equals(password);
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override
