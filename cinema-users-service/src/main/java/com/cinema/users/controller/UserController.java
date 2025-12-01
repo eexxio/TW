@@ -2,6 +2,7 @@ package com.cinema.users.controller;
 
 import com.cinema.users.dto.UserCreateDTO;
 import com.cinema.users.dto.UserDTO;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class UserController {
     public IUserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO>createUser(@RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserDTO>createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
        UserDTO userDTO = userService.createUser(userCreateDTO);
        return ResponseEntity
                .status(HttpStatus.CREATED)
