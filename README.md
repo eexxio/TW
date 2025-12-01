@@ -19,39 +19,39 @@ Manages ticket bookings and reservations - create bookings, view booking history
 ## Project Structure
 ```
 TW/
-├── cinema-movies-service/
+├── cinema-movies-com.cinema.users.service/
 │   ├── src/main/java/com/cinema/movies/
-│   │   ├── controller/
-│   │   ├── service/
-│   │   ├── repository/
-│   │   ├── entity/
-│   │   ├── dto/
+│   │   ├── com.cinema.users.controller/
+│   │   ├── com.cinema.users.service/
+│   │   ├── com.cinema.users.repository/
+│   │   ├── com.cinema.users.entity/
+│   │   ├── com.cinema.users.dto/
 │   │   └── exception/
 │   ├── src/main/resources/
 │   │   └── application.properties
 │   ├── pom.xml
 │   └── README.md
 │
-├── cinema-users-service/
+├── cinema-users-com.cinema.users.service/
 │   ├── src/main/java/com/cinema/users/
-│   │   ├── controller/
-│   │   ├── service/
-│   │   ├── repository/
-│   │   ├── entity/
-│   │   ├── dto/
+│   │   ├── com.cinema.users.controller/
+│   │   ├── com.cinema.users.service/
+│   │   ├── com.cinema.users.repository/
+│   │   ├── com.cinema.users.entity/
+│   │   ├── com.cinema.users.dto/
 │   │   └── exception/
 │   ├── src/main/resources/
 │   │   └── application.properties
 │   ├── pom.xml
 │   └── README.md
 │
-└── cinema-bookings-service/
+└── cinema-bookings-com.cinema.users.service/
     ├── src/main/java/com/cinema/bookings/
-    │   ├── controller/
-    │   ├── service/
-    │   ├── repository/
-    │   ├── entity/
-    │   ├── dto/
+    │   ├── com.cinema.users.controller/
+    │   ├── com.cinema.users.service/
+    │   ├── com.cinema.users.repository/
+    │   ├── com.cinema.users.entity/
+    │   ├── com.cinema.users.dto/
     │   └── exception/
     ├── src/main/resources/
     │   └── application.properties
@@ -120,21 +120,21 @@ Each microservice runs on a different port and can be started independently:
 
 ```bash
 # Terminal 1 - Movies Service
-cd cinema-movies-service
+cd cinema-movies-com.cinema.users.service
 mvn spring-boot:run
 
 # Terminal 2 - Users Service
-cd cinema-users-service
+cd cinema-users-com.cinema.users.service
 mvn spring-boot:run
 
 # Terminal 3 - Bookings Service
-cd cinema-bookings-service
+cd cinema-bookings-com.cinema.users.service
 mvn spring-boot:run
 ```
 
 ## Configuration
 
-Each service has its own `application.properties`:
+Each com.cinema.users.service has its own `application.properties`:
 
 - **Movies Service:** Port 8081
 - **Users Service:** Port 8082

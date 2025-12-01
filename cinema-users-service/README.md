@@ -22,11 +22,11 @@ Microservice responsible for managing user accounts and authentication.
 ## Package Structure
 ```
 com.cinema.users/
-├── controller/     # REST controllers
-├── service/        # Business logic (interface + implementation)
-├── repository/     # Data access layer
-├── entity/         # JPA entities
-├── dto/            # Data Transfer Objects
+├── com.cinema.users.controller/     # REST controllers
+├── com.cinema.users.service/        # Business logic (interface + implementation)
+├── com.cinema.users.repository/     # Data access layer
+├── com.cinema.users.entity/         # JPA entities
+├── com.cinema.users.dto/            # Data Transfer Objects
 └── exception/      # Custom exceptions and handlers
 ```
 
@@ -44,6 +44,6 @@ com.cinema.users/
 
 ## Running the Service
 ```bash
-cd cinema-users-service
+cd cinema-users-com.cinema.users.service
 mvn spring-boot:run
 ```

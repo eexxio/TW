@@ -22,18 +22,18 @@ Microservice responsible for managing ticket bookings and reservations.
 ## Package Structure
 ```
 com.cinema.bookings/
-├── controller/     # REST controllers
-├── service/        # Business logic (interface + implementation)
-├── repository/     # Data access layer
-├── entity/         # JPA entities
-├── dto/            # Data Transfer Objects
+├── com.cinema.users.controller/     # REST controllers
+├── com.cinema.users.service/        # Business logic (interface + implementation)
+├── com.cinema.users.repository/     # Data access layer
+├── com.cinema.users.entity/         # JPA entities
+├── com.cinema.users.dto/            # Data Transfer Objects
 └── exception/      # Custom exceptions and handlers
 ```
 
 ## Entity: Booking
 - id (Long)
-- userId (Long) - Hardcoded reference to Users service
-- movieId (Long) - Hardcoded reference to Movies service
+- userId (Long) - Hardcoded reference to Users com.cinema.users.service
+- movieId (Long) - Hardcoded reference to Movies com.cinema.users.service
 - movieTitle (String) - Denormalized data
 - userEmail (String) - Denormalized data
 - screeningTime (LocalDateTime)
@@ -46,6 +46,6 @@ com.cinema.bookings/
 
 ## Running the Service
 ```bash
-cd cinema-bookings-service
+cd cinema-bookings-com.cinema.users.service
 mvn spring-boot:run
 ```
