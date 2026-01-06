@@ -1,6 +1,6 @@
 package com.cinema.gateway.config;
 
-import com.cinema.gateway.filter.JwtAuthenticationFilter;
+import com.cinema.gateway.filter.CombinedAuthenticationFilter;
 import com.cinema.gateway.security.CustomAuthorizationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ import org.springframework.http.HttpMethod;
 public class GatewayConfig {
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private CombinedAuthenticationFilter combinedAuthenticationFilter;
 
     @Autowired
     private CustomAuthorizationManager authorizationManager;
@@ -61,7 +61,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.POST)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.adminOnly()))
                         .uri(moviesServiceUrl))
 
@@ -70,7 +70,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.PUT)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.adminOnly()))
                         .uri(moviesServiceUrl))
 
@@ -79,7 +79,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.DELETE)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.adminOnly()))
                         .uri(moviesServiceUrl))
 
@@ -89,7 +89,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.DELETE)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.adminOnly()))
                         .uri(usersServiceUrl))
 
@@ -98,7 +98,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.GET)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.adminOnly()))
                         .uri(usersServiceUrl))
 
@@ -107,7 +107,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.GET)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.adminOnly()))
                         .uri(usersServiceUrl))
 
@@ -117,7 +117,7 @@ public class GatewayConfig {
                         .and()
                         .method(HttpMethod.PUT)
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.userResourceOwnership()))
                         .uri(usersServiceUrl))
 
@@ -126,14 +126,14 @@ public class GatewayConfig {
                         .path("/users", "/users/search")
                         .and()
                         .method(HttpMethod.GET)
-                        .filters(f -> f.filter(jwtAuthenticationFilter))
+                        .filters(f -> f.filter(combinedAuthenticationFilter))
                         .uri(usersServiceUrl))
 
                 // Booking operations with ownership verification - Ioana
                 .route("bookings-authenticated", r -> r
                         .path("/api/bookings/**")
                         .filters(f -> f
-                                .filter(jwtAuthenticationFilter)
+                                .filter(combinedAuthenticationFilter)
                                 .filter(authorizationManager.bookingOwnershipFilter()))
                         .uri(bookingsServiceUrl))
 
