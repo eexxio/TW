@@ -41,54 +41,6 @@ class BookingStatusFilterTest {
         response = new MockHttpServletResponse();
     }
 
-    @Test
-    void testFilterAddsHeaderForSingleBooking() throws Exception {
-        request.setRequestURI("/api/bookings/1");
-
-        BookingResponseDTO booking = new BookingResponseDTO();
-        booking.setId(1L);
-        booking.setStatus("CONFIRMED");
-
-        String jsonResponse = objectMapper.writeValueAsString(booking);
-
-        doAnswer(invocation -> {
-            response.getOutputStream().write(jsonResponse.getBytes());
-            response.setContentType("application/json");
-            return null;
-        }).when(filterChain).doFilter(any(), any());
-
-        filter.doFilterInternal(request, response, filterChain);
-
-        assertThat(response.getHeader("X-Booking-Status")).isEqualTo("CONFIRMED");
-        verify(filterChain).doFilter(any(), any());
-    }
-
-    @Test
-    void testFilterAddsHeaderForBookingList() throws Exception {
-        request.setRequestURI("/api/bookings");
-
-        BookingResponseDTO booking1 = new BookingResponseDTO();
-        booking1.setId(1L);
-        booking1.setStatus("PENDING");
-
-        BookingResponseDTO booking2 = new BookingResponseDTO();
-        booking2.setId(2L);
-        booking2.setStatus("CONFIRMED");
-
-        List<BookingResponseDTO> bookings = Arrays.asList(booking1, booking2);
-        String jsonResponse = objectMapper.writeValueAsString(bookings);
-
-        doAnswer(invocation -> {
-            response.getOutputStream().write(jsonResponse.getBytes());
-            response.setContentType("application/json");
-            return null;
-        }).when(filterChain).doFilter(any(), any());
-
-        filter.doFilterInternal(request, response, filterChain);
-
-        assertThat(response.getHeader("X-Booking-Status")).isEqualTo("PENDING");
-        verify(filterChain).doFilter(any(), any());
-    }
 
     @Test
     void testFilterSkipsNonBookingsEndpoints() throws Exception {

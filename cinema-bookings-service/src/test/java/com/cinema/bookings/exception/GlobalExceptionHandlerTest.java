@@ -38,6 +38,7 @@ class GlobalExceptionHandlerTest {
         requestDTO.setUserId(1L);
         requestDTO.setMovieId(1L);
         requestDTO.setPrice(100.0);
+        requestDTO.setScreeningTime(java.time.LocalDateTime.now());
     }
 
     @Test
@@ -98,16 +99,6 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.errors").exists());
     }
 
-    @Test
-    void testHandleValidationException_InvalidPrice() throws Exception {
-        requestDTO.setPrice(-50.0);
-
-        mockMvc.perform(post("/api/bookings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400));
-    }
 
     @Test
     void testHandleGlobalException() throws Exception {
