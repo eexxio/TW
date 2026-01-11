@@ -63,6 +63,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Boot Actuator (required for Micrometer tracing) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Zipkin Distributed Tracing -->
         <dependency>
             <groupId>io.micrometer</groupId>

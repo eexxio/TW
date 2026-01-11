@@ -48,6 +48,13 @@ public class GatewayConfig {
                         .method(HttpMethod.GET)
                         .uri(moviesServiceUrl))
 
+                // Public movie popularity endpoint - Tudor
+                .route("movies-popularity", r -> r
+                        .path("/api/movies/*/popular")
+                        .and()
+                        .method(HttpMethod.POST)
+                        .uri(moviesServiceUrl))
+
                 // Public user registration - Ioana
                 .route("user-registration", r -> r
                         .path("/users/create")
