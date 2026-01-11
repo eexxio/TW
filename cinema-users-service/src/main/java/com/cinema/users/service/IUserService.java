@@ -1,8 +1,6 @@
 package com.cinema.users.service;
 
-import com.cinema.users.dto.UserCreateDTO;
-import com.cinema.users.dto.UserDTO;
-import com.cinema.users.dto.UserActivityDTO;
+import com.cinema.users.dto.*;
 
 import java.util.List;
 
@@ -25,7 +23,7 @@ public interface IUserService {
     /**
      * Updates an existing user's information.
      *
-     * @param email the email identifier of the user to update
+     * @param email   the email identifier of the user to update
      * @param userDTO the updated user details
      * @return the updated user as UserDTO
      * @author Alexandru Tesula
@@ -52,7 +50,7 @@ public interface IUserService {
     /**
      * Authenticates a user with email and password.
      *
-     * @param email the user's email
+     * @param email    the user's email
      * @param password the user's password
      * @return true if credentials are valid, false otherwise
      * @author Alexandru Tesula
@@ -104,6 +102,65 @@ public interface IUserService {
      * @author Alexandru Tesula
      */
     UserDTO getUserById(Long userId);
+
+    /**
+     * Retrieves user with their booking history from the bookings microservice.
+     * This is a cross-service operation that combines data from users and bookings services.
+     * <p>
+     * The method performs the following steps:
+     * 1. Retrieves the user from the local database
+     * 2. Calls the bookings microservice via BookingServiceClient
+     * 3. Combines the data into a single response DTO
+     * <p>
+     * If the bookings service is unavailable, an empty bookings list is returned
+     * with totalBookings set to 0, allowing graceful degradation.
+     *
+     * @param userId the unique identifier of the user
+     * @return DTO containing user information and booking history
+     * @throws RuntimeException if user not found
+     * @author Alexandru Tesula
+     */
+    UserWithBookingsResponseDTO getUserWithBookings(Long userId);
+
+    /**
+     * Retrieves user with their watched movies list.
+     * This is a cross-service operation that combines data from users, bookings, and movies services.
+     *
+     * The method performs the following steps:
+     * 1. Retrieves the user from the local database
+     * 2. Calls the bookings microservice to get all bookings for this user
+     * 3. For each booking, calls the movies microservice to get movie details
+     * 4. Combines all data into a single response DTO
+     *
+     * If external services are unavailable, partial data is returned gracefully.
+     *
+     * @param userId the unique identifier of the user
+     * @return DTO containing user information and list of movies they've watched
+     * @throws RuntimeException if user not found
+     * @author Alexandru Tesula
+     */
+    UserWatchedMoviesResponseDTO getUserWatchedMovies(Long userId);
+
+    /**
+     * Upgrades a user account to premium status and applies discounts to existing bookings.
+     * This is a cross-service operation that updates user status and calls the bookings service
+     * to apply premium discounts to future and existing bookings.
+     *
+     * The method performs the following steps:
+     * 1. Retrieves the user from the local database
+     * 2. Updates the user role to PREMIUM
+     * 3. Calls the bookings microservice to apply discount to user's bookings
+     * 4. Returns upgrade confirmation with discount details
+     *
+     * If the bookings service is unavailable, the user is still upgraded but discounts
+     * may not be applied, allowing graceful degradation.
+     *
+     * @param userId the unique identifier of the user to upgrade
+     * @return DTO containing user information, premium status, and applied discount details
+     * @throws RuntimeException if user not found
+     * @author Alexandru Tesula
+     */
+    UserPremiumUpgradeResponseDTO upgradeToPremium(Long userId);
 }
 
 
