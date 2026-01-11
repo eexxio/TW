@@ -14,6 +14,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the MovieService interface.
+ * Provides business logic for movie management including CRUD operations,
+ * search, filtering, sorting, and cross-microservice integration with the bookings service.
+ *
+ * This service uses Spring Data JPA for database operations and WebClient
+ * for communication with the bookings microservice.
+ *
+ * @author Tudor
+ */
 @Service
 public class MovieServiceImpl implements MovieService {
 
@@ -32,17 +42,38 @@ public class MovieServiceImpl implements MovieService {
         this.movieMapper = movieMapper;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Persists the movie entity to the database with auto-generated ID
+     * and timestamp fields managed by JPA lifecycle hooks.
+     *
+     * @author Tudor
+     */
     @Override
     public Movie createMovie(Movie movie) {
         return movieRepository.save(movie);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @author Tudor
+     */
     @Override
     public Movie getMovieById(Long id) {
         return movieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id: " + id));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Updates all fields of the existing movie while preserving the ID
+     * and creation timestamp. The updated timestamp is automatically managed.
+     *
+     * @author Tudor
+     */
     @Override
     public Movie updateMovie(Long id, Movie movie) {
         Movie existingMovie = getMovieById(id);
@@ -59,27 +90,61 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.save(existingMovie);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * First verifies the movie exists before attempting deletion.
+     *
+     * @author Tudor
+     */
     @Override
     public void deleteMovie(Long id) {
         Movie movie = getMovieById(id);
         movieRepository.delete(movie);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @author Tudor
+     */
     @Override
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Uses a custom repository method with JPA query methods.
+     *
+     * @author Tudor
+     */
     @Override
     public List<Movie> searchMoviesByTitle(String title) {
         return movieRepository.findByTitleContainingIgnoreCase(title);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Uses a custom repository method with JPA query methods.
+     *
+     * @author Tudor
+     */
     @Override
     public List<Movie> filterMoviesByGenre(String genre) {
         return movieRepository.findByGenreIgnoreCase(genre);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Sorting is performed in-memory using Java streams.
+     * For large datasets, consider implementing database-level sorting.
+     *
+     * @author Tudor
+     */
     @Override
     public List<Movie> sortMoviesByRating(String order) {
         List<Movie> movies = movieRepository.findAll();
@@ -99,6 +164,19 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This is a cross-microservice operation that performs the following steps:
+     * 1. Retrieves the movie from the local database
+     * 2. Calls the bookings microservice via BookingServiceClient
+     * 3. Combines the data into a single response DTO
+     *
+     * If the bookings service is unavailable, an empty bookings list is returned
+     * with totalBookings set to 0, allowing graceful degradation.
+     *
+     * @author Tudor
+     */
     @Override
     public MovieWithBookingsResponseDTO getMovieWithBookings(Long movieId) {
         // Get the movie from the database
@@ -116,6 +194,23 @@ public class MovieServiceImpl implements MovieService {
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This is a cross-microservice operation that evaluates movie popularity based
+     * on booking count retrieved from the bookings microservice.
+     *
+     * Popularity threshold is set to {@value #POPULARITY_THRESHOLD} bookings.
+     * The response includes:
+     * - Movie information
+     * - Current booking count
+     * - Boolean popularity flag
+     * - Descriptive message indicating status
+     *
+     * If the bookings service is unavailable, the booking count will be 0.
+     *
+     * @author Tudor
+     */
     @Override
     public MoviePopularityResponseDTO markMovieAsPopular(Long movieId) {
         // Get the movie from the database
