@@ -26,3 +26,4 @@ Thumbs.db
 # JVM crash logs
 hs_err_pid*
 replay_pid*
+cinema-gateway-service/src/main/resources/gcp/*.json
