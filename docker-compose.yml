@@ -70,13 +70,40 @@ services:
       - cinema-network
     restart: on-failure
 
-  bookings-service:
+  bookings-service-1:
     build:
       context: ./cinema-bookings-service
       dockerfile: Dockerfile
-    container_name: cinema-bookings-service
+    container_name: cinema-bookings-service-1
     ports:
       - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinema_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SERVICE_MOVIES_URL: http://movies-service:8081
+      SERVICE_USERS_URL: http://users-service:8082
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      movies-service:
+        condition: service_started
+      users-service:
+        condition: service_started
+    networks:
+      - cinema-network
+    restart: on-failure
+
+  bookings-service-2:
+    build:
+      context: ./cinema-bookings-service
+      dockerfile: Dockerfile
+    container_name: cinema-bookings-service-2
+    ports:
+      - "8084:8083"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinema_db
       SPRING_DATASOURCE_USERNAME: postgres
