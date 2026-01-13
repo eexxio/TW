@@ -78,23 +78,9 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Spring Boot Actuator - provides tracing endpoints -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <!-- Micrometer Tracing Bridge for Brave (Zipkin) -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-brave</artifactId>
-        </dependency>
-
-        <!-- Zipkin Reporter Brave - sends traces to Zipkin server -->
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter-brave</artifactId>
         </dependency>
     </dependencies>
 
