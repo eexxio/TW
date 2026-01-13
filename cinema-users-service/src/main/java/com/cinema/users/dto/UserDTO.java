@@ -3,24 +3,33 @@ package com.cinema.users.dto;
 import com.cinema.users.enums.Role;
 
 public class UserDTO {
+    private Long userId;
     private String email;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private String phoneNumber;
     private String dateOfBirth;
 
     private Role role;
 
-    public UserDTO(String email, String firstname, String lastname,
+    public UserDTO(Long userId, String email, String firstName, String lastName,
                    String phoneNumber, String dateOfBirth, Role role) {
+        this.userId = userId;
         this.email = email;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
-        this.role= role;
+        this.role = role;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getEmail() {
         return email;
@@ -30,20 +39,20 @@ public class UserDTO {
         this.email = email;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPhoneNumber() {
