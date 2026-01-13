@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: cinema-postgres
+    environment:
+      POSTGRES_DB: cinema_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cinema-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: cinema-zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - cinema-network
+
+  movies-service:
+    build:
+      context: ./cinema-movies-service
+      dockerfile: Dockerfile
+    container_name: cinema-movies-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinema_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+    networks:
+      - cinema-network
+    restart: on-failure
+
+  users-service:
+    build:
+      context: ./cinema-users-service
+      dockerfile: Dockerfile
+    container_name: cinema-users-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinema_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+    networks:
+      - cinema-network
+    restart: on-failure
+
+  bookings-service:
+    build:
+      context: ./cinema-bookings-service
+      dockerfile: Dockerfile
+    container_name: cinema-bookings-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cinema_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SERVICE_MOVIES_URL: http://movies-service:8081
+      SERVICE_USERS_URL: http://users-service:8082
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      movies-service:
+        condition: service_started
+      users-service:
+        condition: service_started
+    networks:
+      - cinema-network
+    restart: on-failure
+
+networks:
+  cinema-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
