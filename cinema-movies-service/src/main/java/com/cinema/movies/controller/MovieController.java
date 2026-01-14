@@ -1,8 +1,6 @@
 package com.cinema.movies.controller;
 
-import com.cinema.movies.dto.MovieMapper;
-import com.cinema.movies.dto.MovieRequestDTO;
-import com.cinema.movies.dto.MovieResponseDTO;
+import com.cinema.movies.dto.*;
 import com.cinema.movies.entity.Movie;
 import com.cinema.movies.service.MovieService;
 import jakarta.validation.Valid;
@@ -75,5 +73,31 @@ public class MovieController {
         List<Movie> movies = movieService.sortMoviesByRating(order);
         List<MovieResponseDTO> responseDTOs = movieMapper.toResponseDTOList(movies);
         return ResponseEntity.ok(responseDTOs);
+    }
+
+    /**
+     * Cross-service endpoint: Retrieves a movie with all its bookings.
+     * This endpoint calls the bookings-service to fetch booking information.
+     *
+     * @param movieId the ID of the movie
+     * @return movie information combined with booking data
+     */
+    @GetMapping("/{movieId}/bookings")
+    public ResponseEntity<MovieWithBookingsResponseDTO> getMovieWithBookings(@PathVariable Long movieId) {
+        MovieWithBookingsResponseDTO response = movieService.getMovieWithBookings(movieId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Cross-service endpoint: Marks a movie as popular based on booking count.
+     * This endpoint calls the bookings-service to get the booking count.
+     *
+     * @param movieId the ID of the movie
+     * @return movie popularity information
+     */
+    @PostMapping("/{movieId}/popular")
+    public ResponseEntity<MoviePopularityResponseDTO> markMovieAsPopular(@PathVariable Long movieId) {
+        MoviePopularityResponseDTO response = movieService.markMovieAsPopular(movieId);
+        return ResponseEntity.ok(response);
     }
 }

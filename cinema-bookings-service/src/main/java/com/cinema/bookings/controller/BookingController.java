@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -68,5 +69,24 @@ public class BookingController {
             @RequestParam(defaultValue = "asc") String order) {
         List<BookingResponseDTO> bookings = bookingService.sortBookings(by, order);
         return ResponseEntity.ok(bookings);
+    }
+
+    @PostMapping("/create-with-validation")
+    public ResponseEntity<BookingResponseDTO> createBookingWithValidation(
+            @Valid @RequestBody BookingRequestDTO requestDTO) {
+        BookingResponseDTO response = bookingService.createBookingWithValidation(requestDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<BookingResponseDTO> confirmBooking(@PathVariable Long id) {
+        BookingResponseDTO response = bookingService.confirmBooking(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/enriched")
+    public ResponseEntity<Map<String, Object>> getEnrichedBooking(@PathVariable Long id) {
+        Map<String, Object> response = bookingService.getEnrichedBooking(id);
+        return ResponseEntity.ok(response);
     }
 }

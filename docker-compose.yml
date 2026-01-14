@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # PostgreSQL Database
   postgres:
@@ -8,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Ily.040819
     ports:
-      - "5433:5432"
+      - "5433:5432"  # Using 5433 to avoid conflict with local postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -32,6 +34,64 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # Gateway Service - Profile 1: Security Validation
+  gateway-security:
+    build: ./cinema-gateway-service
+    container_name: cinema-gateway-security
+    profiles: ["security"]
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      JWT_SECRET: 16048e89108f6a891b8634b5d6cf043082dd0b61155733d5455b7cc981a01d59
+      IAM_ENABLED: "true"
+      SERVICE_USERS_URL: http://users-service:8082
+      SERVICE_MOVIES_URL: http://movies-service-1:8081
+      SERVICE_BOOKINGS_URL: http://bookings-service:8083
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    networks:
+      - cinema-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+      movies-service-1:
+        condition: service_started
+      users-service:
+        condition: service_started
+      bookings-service:
+        condition: service_started
+
+  # Gateway Service - Profile 2: Endpoint Testing
+  gateway-endpoints:
+    build: ./cinema-gateway-service
+    container_name: cinema-gateway-endpoints
+    profiles: ["endpoints"]
+    ports:
+      - "8090:8080"
+    environment:
+      SERVER_PORT: 8080
+      JWT_SECRET: 16048e89108f6a891b8634b5d6cf043082dd0b61155733d5455b7cc981a01d59
+      IAM_ENABLED: "false"
+      SERVICE_USERS_URL: http://users-service:8082
+      SERVICE_MOVIES_URL: http://movies-service-1:8081
+      SERVICE_BOOKINGS_URL: http://bookings-service:8083
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    networks:
+      - cinema-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zipkin:
+        condition: service_healthy
+      movies-service-1:
+        condition: service_started
+      users-service:
+        condition: service_started
+      bookings-service:
+        condition: service_started
 
   # Movies Service - Instance 1 (primary)
   movies-service-1:
@@ -125,64 +185,6 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # Gateway Service - Profile 1: Security Validation (with JWT)
-  gateway-security:
-    build: ./cinema-gateway-service
-    container_name: cinema-gateway-security
-    profiles: ["security"]
-    ports:
-      - "8080:8080"
-    environment:
-      SERVER_PORT: 8080
-      JWT_SECRET: 16048e89108f6a891b8634b5d6cf043082dd0b61155733d5455b7cc981a01d59
-      IAM_ENABLED: "true"
-      SERVICE_USERS_URL: http://users-service:8082
-      SERVICE_MOVIES_URL: http://movies-service-1:8081
-      SERVICE_BOOKINGS_URL: http://bookings-service:8083
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-    networks:
-      - cinema-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-      zipkin:
-        condition: service_healthy
-      movies-service-1:
-        condition: service_started
-      users-service:
-        condition: service_started
-      bookings-service:
-        condition: service_started
-
-  # Gateway Service - Profile 2: Endpoint Testing (no JWT)
-  gateway-endpoints:
-    build: ./cinema-gateway-service
-    container_name: cinema-gateway-endpoints
-    profiles: ["endpoints"]
-    ports:
-      - "8090:8080"
-    environment:
-      SERVER_PORT: 8080
-      JWT_SECRET: 16048e89108f6a891b8634b5d6cf043082dd0b61155733d5455b7cc981a01d59
-      IAM_ENABLED: "false"
-      SERVICE_USERS_URL: http://users-service:8082
-      SERVICE_MOVIES_URL: http://movies-service-1:8081
-      SERVICE_BOOKINGS_URL: http://bookings-service:8083
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-    networks:
-      - cinema-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-      zipkin:
-        condition: service_healthy
-      movies-service-1:
-        condition: service_started
-      users-service:
-        condition: service_started
-      bookings-service:
-        condition: service_started
-
 networks:
   cinema-network:
     driver: bridge
@@ -190,4 +192,3 @@ networks:
 volumes:
   postgres_data:
     driver: local
-
