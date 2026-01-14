@@ -29,3 +29,4 @@ replay_pid*
 
 # Google Cloud Service Account Keys
 **/gcp/*.json
+tmpclaude-*
