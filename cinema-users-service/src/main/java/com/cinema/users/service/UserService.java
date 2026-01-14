@@ -1,10 +1,12 @@
 package com.cinema.users.service;
 
-import com.cinema.users.dto.UserCreateDTO;
-import com.cinema.users.dto.UserDTO;
+import com.cinema.users.client.BookingServiceClient;
+import com.cinema.users.client.MovieServiceClient;
+import com.cinema.users.dto.*;
 import com.cinema.users.entity.User;
 import jakarta.transaction.Transactional;
 import com.cinema.users.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cinema.users.repository.UserRepository;
@@ -13,12 +15,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserService implements  IUserService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BookingServiceClient bookingServiceClient;
+
+    @Autowired
+    private MovieServiceClient movieServiceClient;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -103,6 +114,120 @@ public class UserService implements  IUserService{
                 .sorted(comparator)
                 .map(UserMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    public UserWithBookingsResponseDTO getUserWithBookings(Long userId) {
+        // Get the user from the database
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Fetch bookings from the bookings service
+        List<BookingDTO> bookings = bookingServiceClient.getBookingsByUserId(userId);
+
+        // Create the response DTO
+        UserWithBookingsResponseDTO response = new UserWithBookingsResponseDTO();
+        response.setUser(UserMapper.toDTO(user));
+        response.setBookings(bookings);
+        response.setTotalBookings(bookings.size());
+
+        return response;
+    }
+
+    @Override
+    public UserWatchedMoviesResponseDTO getUserWatchedMovies(Long userId) {
+        // Get the user from the database
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Fetch bookings from the bookings service
+        List<BookingDTO> bookings = bookingServiceClient.getBookingsByUserId(userId);
+
+        // Fetch movie details for each booking
+        List<MovieDTO> watchedMovies = bookings.stream()
+                .map(BookingDTO::getMovieId)
+                .distinct()
+                .map(movieServiceClient::getMovieById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // Create the response DTO
+        UserWatchedMoviesResponseDTO response = new UserWatchedMoviesResponseDTO();
+        response.setUser(UserMapper.toDTO(user));
+        response.setWatchedMovies(watchedMovies);
+        response.setTotalMoviesWatched(watchedMovies.size());
+
+        return response;
+    }
+
+    @Override
+    public UserActivityDTO getUserActivity(Long userId) {
+        // Get the user from the database
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        List<BookingDTO> bookings = bookingServiceClient.getBookingsByUserId(userId);
+
+        List<MovieDTO> watchedMovies = bookings.stream()
+                .map(BookingDTO::getMovieId)
+                .distinct()
+                .map(movieServiceClient::getMovieById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // Create the response DTO
+        UserActivityDTO response = new UserActivityDTO();
+        response.setUser(UserMapper.toDTO(user));
+        response.setBookings(bookings);
+        response.setWatchedMovies(watchedMovies);
+        response.setTotalBookings(bookings.size());
+        response.setTotalMoviesWatched(watchedMovies.size());
+
+        return response;
+    }
+
+    @Override
+    public UserDTO getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .map(UserMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+    }
+
+    @Override
+    public UserPremiumUpgradeResponseDTO upgradeToPremium(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        boolean wasAlreadyPremium = user.getRole() != null &&
+                                   user.getRole().equals(com.cinema.users.enums.Role.PREMIUM);
+
+        // Update user role to PREMIUM
+        user.setRole(com.cinema.users.enums.Role.PREMIUM);
+        userRepository.save(user);
+
+        // Get user's bookings to apply discount
+        List<BookingDTO> bookings = bookingServiceClient.getBookingsByUserId(userId);
+        long appliedToBookingsCount = bookings.size();
+
+        // Create the response DTO
+        UserPremiumUpgradeResponseDTO response = new UserPremiumUpgradeResponseDTO();
+        response.setUser(UserMapper.toDTO(user));
+        response.setPremium(true);
+        response.setDiscountPercentage(10.0); // 10% discount for premium users
+        response.setAppliedToBookingsCount(appliedToBookingsCount);
+
+        String message;
+        if (wasAlreadyPremium) {
+            message = String.format("User '%s' is already premium. Discount applies to %d existing bookings",
+                    user.getEmail(), appliedToBookingsCount);
+        } else {
+            message = String.format("User '%s' successfully upgraded to premium. 10%% discount applied to %d bookings",
+                    user.getEmail(), appliedToBookingsCount);
+        }
+        response.setMessage(message);
+
+        log.info("User {} upgraded to premium status", userId);
+        return response;
     }
 
 }

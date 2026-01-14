@@ -1,7 +1,6 @@
 package com.cinema.users.controller;
 
-import com.cinema.users.dto.UserCreateDTO;
-import com.cinema.users.dto.UserDTO;
+import com.cinema.users.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -88,5 +87,57 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    /**
+     * Cross-service endpoint: Retrieves a user with all their bookings.
+     * This endpoint calls the bookings-service to fetch booking information.
+     *
+     * @param userId the ID of the user
+     * @return user information combined with booking data
+     */
+    @GetMapping("/{userId}/bookings")
+    public ResponseEntity<UserWithBookingsResponseDTO> getUserWithBookings(@PathVariable Long userId) {
+        UserWithBookingsResponseDTO response = userService.getUserWithBookings(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Cross-service endpoint: Retrieves a user with movies they have watched.
+     * This endpoint calls the bookings-service and movies-service to fetch complete information.
+     *
+     * @param userId the ID of the user
+     * @return user information combined with watched movies list
+     */
+    @GetMapping("/{userId}/watched-movies")
+    public ResponseEntity<UserWatchedMoviesResponseDTO> getUserWatchedMovies(@PathVariable Long userId) {
+        UserWatchedMoviesResponseDTO response = userService.getUserWatchedMovies(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Cross-service endpoint: Retrieves comprehensive user activity information.
+     * Aggregates user profile, bookings, and watched movies from multiple services.
+     *
+     * @param userId the ID of the user
+     * @return aggregated user activity information
+     */
+    @GetMapping("/{userId}/activity")
+    public ResponseEntity<UserActivityDTO> getUserActivity(@PathVariable Long userId) {
+        UserActivityDTO response = userService.getUserActivity(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Cross-service endpoint: Upgrades a user to premium status.
+     * This endpoint calls the bookings-service to apply premium discounts to user's bookings.
+     * This is a POST request that modifies user state and calls external services.
+     *
+     * @param userId the ID of the user to upgrade
+     * @return premium upgrade response with discount details
+     */
+    @PostMapping("/{userId}/upgrade-premium")
+    public ResponseEntity<UserPremiumUpgradeResponseDTO> upgradeToPremium(@PathVariable Long userId) {
+        UserPremiumUpgradeResponseDTO response = userService.upgradeToPremium(userId);
+        return ResponseEntity.ok(response);
+    }
 
 }

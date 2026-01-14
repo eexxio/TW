@@ -152,6 +152,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: Ily.040819
       MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
       SPRING_APPLICATION_NAME: cinema-users-service
+      SERVICE_BOOKINGS_URL: http://bookings-service:8083
+      SERVICE_MOVIES_URL: http://movies-service-1:8081
     networks:
       - cinema-network
     depends_on:
