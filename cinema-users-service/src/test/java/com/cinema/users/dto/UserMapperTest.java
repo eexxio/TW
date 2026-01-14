@@ -94,8 +94,8 @@ class UserMapperTest {
         // Assert
         assertNotNull(userDTO);
         assertEquals("john@example.com", userDTO.getEmail());
-        assertEquals("John", userDTO.getFirstname());
-        assertEquals("Doe", userDTO.getLastname());
+        assertEquals("John", userDTO.getFirstName());
+        assertEquals("Doe", userDTO.getLastName());
         assertEquals("+1234567890", userDTO.getPhoneNumber());
         assertEquals("1990-01-01", userDTO.getDateOfBirth());
         assertEquals(Role.ADMIN, userDTO.getRole());
@@ -113,7 +113,7 @@ class UserMapperTest {
         // Assert
         assertNotNull(userDTO);
         assertEquals("jane@example.com", userDTO.getEmail());
-        assertEquals("Jane", userDTO.getFirstname());
+        assertEquals("Jane", userDTO.getFirstName());
         assertNull(userDTO.getPhoneNumber());
         assertNull(userDTO.getDateOfBirth());
     }
@@ -136,8 +136,8 @@ class UserMapperTest {
         UserDTO resultDTO = UserMapper.toDTO(user);
 
         // Assert
-        assertEquals(originalDTO.getFirstName(), resultDTO.getFirstname());
-        assertEquals(originalDTO.getLastName(), resultDTO.getLastname());
+        assertEquals(originalDTO.getFirstName(), resultDTO.getFirstName());
+        assertEquals(originalDTO.getLastName(), resultDTO.getLastName());
         assertEquals(originalDTO.getEmail(), resultDTO.getEmail());
         assertEquals(originalDTO.getPhoneNumber(), resultDTO.getPhoneNumber());
         assertEquals(originalDTO.getDateOfBirth(), resultDTO.getDateOfBirth());
@@ -174,7 +174,7 @@ class UserMapperTest {
         // Assert
         // Note: UserDTO doesn't have id field, but email is unique identifier
         assertEquals("original@example.com", userDTO.getEmail());
-        assertEquals("Original", userDTO.getFirstname());
+        assertEquals("Original", userDTO.getFirstName());
     }
 
     @Test
@@ -216,8 +216,8 @@ class UserMapperTest {
 
         // Assert
         assertNotNull(userDTO);
-        assertEquals("José", userDTO.getFirstname());
-        assertEquals("García-López", userDTO.getLastname());
+        assertEquals("José", userDTO.getFirstName());
+        assertEquals("García-López", userDTO.getLastName());
         assertEquals("jose.garcia@example.com", userDTO.getEmail());
     }
 }

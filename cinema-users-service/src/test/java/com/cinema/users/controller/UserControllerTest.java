@@ -50,6 +50,7 @@ class UserControllerTest {
     void setUp() {
         // Setup test user
         testUserDTO = new UserDTO(
+                1L,
                 "test@example.com",
                 "John",
                 "Doe",

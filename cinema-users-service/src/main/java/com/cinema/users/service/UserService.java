@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,7 +148,7 @@ public class UserService implements  IUserService{
                 .map(BookingDTO::getMovieId)
                 .distinct()
                 .map(movieServiceClient::getMovieById)
-                .filter(movie -> movie != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         // Create the response DTO
@@ -165,15 +166,13 @@ public class UserService implements  IUserService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Fetch bookings from the bookings service
         List<BookingDTO> bookings = bookingServiceClient.getBookingsByUserId(userId);
 
-        // Fetch movie details for each booking
         List<MovieDTO> watchedMovies = bookings.stream()
                 .map(BookingDTO::getMovieId)
                 .distinct()
                 .map(movieServiceClient::getMovieById)
-                .filter(movie -> movie != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         // Create the response DTO
@@ -196,11 +195,9 @@ public class UserService implements  IUserService{
 
     @Override
     public UserPremiumUpgradeResponseDTO upgradeToPremium(Long userId) {
-        // Get the user from the database
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Check if already premium
         boolean wasAlreadyPremium = user.getRole() != null &&
                                    user.getRole().equals(com.cinema.users.enums.Role.PREMIUM);
 
