@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: cinema_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Ily.040819
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5433:5432"  # Using 5433 to avoid conflict with local postgres
     volumes:

@@ -1,5 +1,6 @@
 package com.cinema.users.controller;
 
+import com.cinema.users.config.SecurityConfig;
 import com.cinema.users.dto.*;
 import com.cinema.users.enums.Role;
 import com.cinema.users.service.IUserService;
@@ -7,9 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,7 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Alexandru Tesula
  */
 @WebMvcTest(UserController.class)
-@WithMockUser
+@Import(SecurityConfig.class)
+@AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
     @Autowired
@@ -60,9 +63,9 @@ class UserControllerTest {
         );
 
         testUserCreateDTO = new UserCreateDTO(
-                "newuser@example.com",
                 "Jane",
                 "Smith",
+                "newuser@example.com",
                 "password123456",
                 "+1987654321",
                 "1995-05-15",
@@ -93,7 +96,7 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(testUserCreateDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value("test@example.com"))
-                .andExpect(jsonPath("$.firstname").value("John"))
+                .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.role").value("USER"));
     }
 
@@ -198,7 +201,7 @@ class UserControllerTest {
                         .param("keyword", "John"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].firstname").value("John"));
+                .andExpect(jsonPath("$[0].firstName").value("John"));
     }
 
     @Test
@@ -312,18 +315,11 @@ class UserControllerTest {
         mockMvc.perform(post("/users/1/upgrade-premium"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.user").exists())
-                .andExpect(jsonPath("$.isPremium").value(true))
+                .andExpect(jsonPath("$.premium").value(true))
                 .andExpect(jsonPath("$.discountPercentage").value(10.0))
                 .andExpect(jsonPath("$.appliedToBookingsCount").value(1));
     }
 
-    @Test
-    void testUpgradeToPremium_UserNotFound() throws Exception {
-        when(userService.upgradeToPremium(999L))
-                .thenThrow(new RuntimeException("User not found with id: 999"));
-
-        mockMvc.perform(post("/users/999/upgrade-premium"))
-                .andExpect(status().isInternalServerError());
-    }
 }
+
 

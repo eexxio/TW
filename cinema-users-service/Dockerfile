@@ -1,4 +1,4 @@
-# Multi-stage build for Cinema Users Service
+# Multi-stage build for Cinema Gateway Service
 FROM maven:3.9-eclipse-temurin-25-alpine AS build
 WORKDIR /app
 

@@ -144,6 +144,37 @@ public class GatewayConfig {
                                 .filter(authorizationManager.bookingOwnershipFilter()))
                         .uri(bookingsServiceUrl))
 
+                // Cross-service user endpoints - Alexandru Tesula
+                .route("users-with-bookings", r -> r
+                        .path("/users/*/bookings")
+                        .and()
+                        .method(HttpMethod.GET)
+                        .filters(f -> f.filter(combinedAuthenticationFilter))
+                        .uri(usersServiceUrl))
+
+                .route("users-watched-movies", r -> r
+                        .path("/users/*/watched-movies")
+                        .and()
+                        .method(HttpMethod.GET)
+                        .filters(f -> f.filter(combinedAuthenticationFilter))
+                        .uri(usersServiceUrl))
+
+                .route("users-activity", r -> r
+                        .path("/users/*/activity")
+                        .and()
+                        .method(HttpMethod.GET)
+                        .filters(f -> f.filter(combinedAuthenticationFilter))
+                        .uri(usersServiceUrl))
+
+                .route("users-upgrade-premium", r -> r
+                        .path("/users/*/upgrade-premium")
+                        .and()
+                        .method(HttpMethod.POST)
+                        .filters(f -> f
+                                .filter(combinedAuthenticationFilter)
+                                .filter(authorizationManager.adminOnly()))
+                        .uri(usersServiceUrl))
+
                 .build();
     }
 }

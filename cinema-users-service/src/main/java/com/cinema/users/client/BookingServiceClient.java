@@ -47,9 +47,9 @@ public class BookingServiceClient {
 
             return webClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/api/bookings")
+                            .path("/api/bookings/user/{userId}")
                             .queryParam("userId", userId)
-                            .build())
+                            .build(userId))
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<BookingDTO>>() {})
                     .timeout(TIMEOUT)
