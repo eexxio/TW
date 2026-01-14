@@ -181,7 +181,7 @@ public class BookingServiceImpl implements BookingService {
         );
 
         UserResponseDTO user = restTemplate.getForObject(
-                usersServiceUrl + "/api/users/" + requestDTO.getUserId(),
+                usersServiceUrl + "/users/" + requestDTO.getUserId(),
                 UserResponseDTO.class
         );
 
@@ -217,7 +217,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException(id));
 
         UserResponseDTO user = restTemplate.getForObject(
-                usersServiceUrl + "/api/users/" + booking.getUserId(),
+                usersServiceUrl + "/users/" + booking.getUserId(),
                 UserResponseDTO.class
         );
 
@@ -249,7 +249,7 @@ public class BookingServiceImpl implements BookingService {
         );
 
         UserResponseDTO user = restTemplate.getForObject(
-                usersServiceUrl + "/api/users/" + booking.getUserId(),
+                usersServiceUrl + "/users/" + booking.getUserId(),
                 UserResponseDTO.class
         );
 

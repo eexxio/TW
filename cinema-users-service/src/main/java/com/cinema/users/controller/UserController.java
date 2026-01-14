@@ -88,6 +88,20 @@ public class UserController {
     }
 
     /**
+     * Retrieves a user by their unique identifier.
+     * This endpoint is used by other microservices for cross-service communication.
+     *
+     * @param userId the ID of the user
+     * @return user information
+     * @author Tudor - Viza 3 bugfix
+     */
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+        UserDTO user = userService.getUserById(userId);
+        return ResponseEntity.ok(user);
+    }
+
+    /**
      * Cross-service endpoint: Retrieves a user with all their bookings.
      * This endpoint calls the bookings-service to fetch booking information.
      *
